@@ -3,6 +3,7 @@ const bodyParser = require('body-parser');
 const authRoutes = require('./routes/auth');
 const app = express();
 const port = 5000;
+// const pool = require('./config/db.js');
 
 // middlewares
 app.use(bodyParser.json());
@@ -13,7 +14,7 @@ app.listen(port, () => {
 });
 
 // routes redirect
-app.use('/auth', authRoutes);
+app.use('/users/auth', authRoutes);
 
 
 
