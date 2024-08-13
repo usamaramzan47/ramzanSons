@@ -1,9 +1,17 @@
-
 const express = require('express');
-const { register, login } = require('../controllers/auth');
 const router = express.Router();
-require('dotenv').config();
+const {
+    getAllUsers,
+    createUser,
+    getUserById,
+    updateUser,
+    deleteUser
+} = require('../controllers/users');
 
-// users routes 
-router.post('/', getAllUsers)
+router.get('/', getAllUsers);
+router.post('/', createUser);
+router.get('/:id', getUserById);
+router.put('/:id', updateUser);
+router.delete('/:id', deleteUser);
+
 module.exports = router;
