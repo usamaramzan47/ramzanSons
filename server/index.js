@@ -4,6 +4,8 @@ const authRoutes = require('./routes/auth');
 const users = require('./routes/users');
 const employes = require('./routes/employes');
 const departments = require('./routes/departments');
+const products = require('./routes/products');
+const authenticate = require('./middlewares/auth');
 const app = express();
 const port = 5000;
 
@@ -16,6 +18,7 @@ app.use('/users/auth', authRoutes);
 app.use('/users', users);
 app.use('/employees', employes);
 app.use('/dept', departments);
+app.use('/products', products);
 
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);
