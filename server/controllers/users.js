@@ -15,7 +15,7 @@ const getAllUsers = async (req, res) => {
         );
         res.status(200).json(result.rows);
     } catch (err) {
-        res.status(500).json({ message: 'Server error', error: err });
+        res.status(500).json({ message: 'Temporary Service Down', error: err });
     }
 };
 
@@ -41,7 +41,7 @@ const createUser = async (req, res) => {
             return res.status(400).json({ message: 'username already exist' });
 
 
-        res.status(500).json({ message: 'Server error', error: err });
+        res.status(500).json({ message: 'Temporary Service Down', error: err });
     }
 };
 
@@ -71,13 +71,21 @@ const getUserById = async (req, res) => {
 
         res.status(200).json(result.rows[0]);
     } catch (err) {
-        res.status(500).json({ message: 'Server error', error: err });
+        if (err.code === '22003')
+            res.status(400).json({ message: 'id not exist!' });
+        else
+            res.status(500).json({ message: 'Temporary Service Down', error: err });
     }
 };
 
 const updateUser = async (req, res) => {
     const { id } = req.params;
     const updates = req.body;
+
+    // Check if id is a valid integer using a regular expression
+    if (!/^\d+$/.test(id)) {
+        return res.status(400).json({ error: 'ID must be an integer' });
+    }
 
     try {
         let setClause = [];
@@ -109,16 +117,23 @@ const updateUser = async (req, res) => {
     } catch (err) {
         console.log(err)
         if (err.code === "42703")
-            return res.status(400).json({ message: 'No fields match to update' });
+            res.status(400).json({ message: 'No fields match to update' });
         else if (err.code === "23503")
-            return res.status(400).json({ message: err.detail });
-
-        res.status(500).json({ message: 'Server error', error: err });
+            res.status(400).json({ message: err.detail });
+        else if (err.code === '22003')
+            res.status(400).json({ message: 'id not exist!' });
+        else
+            res.status(500).json({ message: 'Temporary Service Down', error: err });
     }
 };
 
 const deleteUser = async (req, res) => {
     const { id } = req.params;
+
+    // Check if id is a valid integer using a regular expression
+    if (!/^\d+$/.test(id)) {
+        return res.status(400).json({ error: 'ID must be an integer' });
+    }
 
     try {
         const result = await pool.query(
@@ -132,7 +147,12 @@ const deleteUser = async (req, res) => {
 
         res.status(200).json({ message: 'User deleted successfully' });
     } catch (err) {
-        res.status(500).json({ message: 'Server error', error: err });
+        if (err.code === "23503")
+            res.status(400).json({ message: 'the order id is still engaged with another table' });
+        else if (err.code === '22003')
+            res.status(400).json({ message: 'id not exist!' });
+        else
+            res.status(500).json({ message: 'Temporary Service Down', error: err });
     }
 };
 

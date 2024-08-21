@@ -24,7 +24,7 @@ const createProduct = async (req, res) => {
         res.status(201).json(result.rows[0]);
     } catch (err) {
         console.error(err);
-        res.status(500).json({ message: 'Server error', error: err });
+        res.status(500).json({ message: 'Temporary Service Down', error: err });
     }
 };
 
@@ -35,13 +35,17 @@ const getAllProducts = async (req, res) => {
         res.status(200).json(result.rows);
     } catch (err) {
         console.error(err);
-        res.status(500).json({ message: 'Server error', error: err });
+        res.status(500).json({ message: 'Temporary Service Down', error: err });
     }
 };
 //get by id
 const getProductById = async (req, res) => {
     const { id } = req.params;
 
+    // Check if id is a valid integer using a regular expression
+    if (!/^\d+$/.test(id)) {
+        return res.status(400).json({ error: 'ID must be an integer' });
+    }
     try {
         const result = await pool.query(`SELECT * FROM Products WHERE product_id = $1`, [id]);
 
@@ -51,16 +55,21 @@ const getProductById = async (req, res) => {
 
         res.status(200).json(result.rows[0]);
     } catch (err) {
-        console.error(err);
-        res.status(500).json({ message: 'Server error', error: err });
+        if (err.code === '22003')
+            res.status(400).json({ message: 'id not exist!' });
+        else
+            res.status(500).json({ message: 'Temporary Service Down', error: err });
     }
 };
-
 //update
 const updateProduct = async (req, res) => {
     const { id } = req.params;
     const { product_name, size } = req.body;
 
+    // Check if id is a valid integer using a regular expression
+    if (!/^\d+$/.test(id)) {
+        return res.status(400).json({ error: 'ID must be an integer' });
+    }
 
     // Validate the inputs
     if (!product_name || product_name === undefined || Array.isArray(product_name)) {
@@ -85,14 +94,20 @@ const updateProduct = async (req, res) => {
 
         res.status(200).json(result.rows[0]);
     } catch (err) {
-        console.error(err);
-        res.status(500).json({ message: 'Server error', error: err });
+        if (err.code === '22003')
+            res.status(400).json({ message: 'id not exist!' });
+        else
+            res.status(500).json({ message: 'Temporary Service Down', error: err });
     }
 };
 //delete 
 const deleteProduct = async (req, res) => {
     const { id } = req.params;
 
+    // Check if id is a valid integer using a regular expression
+    if (!/^\d+$/.test(id)) {
+        return res.status(400).json({ error: 'ID must be an integer' });
+    }
     try {
         const result = await pool.query(`DELETE FROM Products WHERE product_id = $1 RETURNING *`, [id]);
 
@@ -102,12 +117,12 @@ const deleteProduct = async (req, res) => {
 
         res.status(200).json({ message: 'Product deleted successfully' });
     } catch (err) {
-        if (err.code === '22P02')
-            res.status(400).json({ message: 'id must be an intiger value' });
-        else if(err.code === '23503')
-        res.status(400).json({ message: err.detail });
+        if (err.code === '22003')
+            res.status(400).json({ message: 'id not exist!' });
+        else if (err.code === "23503")
+            res.status(400).json({ message: 'the id is still engaged with another table' });
         else
-res.status(500).json({ message: 'Temporary Server Down', error: err });
+            res.status(500).json({ message: 'Temporary Server Down', error: err });
     }
 };
 

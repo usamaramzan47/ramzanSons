@@ -10,14 +10,17 @@ const getAllEmployees = async (req, res) => {
         res.status(200).json(result.rows);
     } catch (err) {
 
-        res.status(500).json({ message: 'Server error', error: err });
+        res.status(500).json({ message: 'Temporary Service Down', error: err });
     }
 }
 
 //get by id
 const getEmployeeById = async (req, res) => {
     const { id } = req.params;
-
+    // Check if id is a valid integer using a regular expression
+    if (!/^\d+$/.test(id)) {
+        return res.status(400).json({ error: 'ID must be an integer' });
+    }
     try {
         const result = await pool.query(
             `SELECT e.employee_id, e.name, d.department_name, e.role, e.phone_number, e.address, e.image 
@@ -33,7 +36,10 @@ const getEmployeeById = async (req, res) => {
 
         res.status(200).json(result.rows[0]);
     } catch (err) {
-        res.status(500).json({ message: 'Server error', error: err });
+        if (err.code === '22003')
+            res.status(400).json({ message: 'id not exist!' });
+        else
+            res.status(500).json({ message: 'Temporary Service Down', error: err });
     }
 }
 
@@ -41,6 +47,9 @@ const getEmployeeById = async (req, res) => {
 const createEmployee = async (req, res) => {
     const { name, department_id, role, phone_number, address, image } = req.body;
 
+    if (!/^\d+$/.test(department_id)) {
+        return res.status(400).json({ error: 'ID must be an integer' });
+    }
     try {
         const result = await pool.query(
             `INSERT INTO employees (name, department_id, role, address, phone_number, image)
@@ -51,12 +60,12 @@ const createEmployee = async (req, res) => {
 
         res.status(201).json(result.rows[0]);
     } catch (err) {
-        if (err.column)
-            return res.status(400).json({ error: `Required field missing ${err.column}` });
-        else if (err.detail)
-            return res.status(400).json({ error: `${err.detail}` });
+        if (err.code === '22P02' || err.code === '22003' || err.code === '23503')
+            return res.status(400).json({ message: 'department id not exist!' });
+        else if (err.column)
+            return res.status(400).json({ message: "Required field missing" });
 
-        res.status(500).json({ message: 'Server error', error: err });
+        res.status(500).json({ message: 'Temporary Service Down', error: err });
     }
 }
 
@@ -65,6 +74,10 @@ const updateEmployee = async (req, res) => {
     const { id } = req.params;
     const fields = req.body;
 
+    // Check if id is a valid integer using a regular expression
+    if (!/^\d+$/.test(id)) {
+        return res.status(400).json({ error: 'ID must be an integer' });
+    }
     // Check if fields are provided
     if (Object.keys(fields).length === 0) {
         return res.status(400).json({ message: 'No fields provided for update' });
@@ -96,14 +109,20 @@ const updateEmployee = async (req, res) => {
 
         res.status(200).json(result.rows[0]);
     } catch (err) {
-        res.status(500).json({ message: 'Server error', error: err });
+        if (err.code === '22003')
+            res.status(400).json({ message: 'id not exist!' });
+        else
+            res.status(500).json({ message: 'Temporary Service Down', error: err });
     }
 }
 
 // delete an employee
 const deleteEmployee = async (req, res) => {
     const { id } = req.params;
-
+    // Check if id is a valid integer using a regular expression
+    if (!/^\d+$/.test(id)) {
+        return res.status(400).json({ error: 'ID must be an integer' });
+    }
     try {
         const result = await pool.query(
             `DELETE FROM employees
@@ -119,16 +138,22 @@ const deleteEmployee = async (req, res) => {
         res.status(200).json({ message: 'Employee deleted successfully' });
     } catch (err) {
         if (err.code === "23503")
-            return res.status(400).json({ message: 'relation with other table', error: err.detail });
-
-        res.status(500).json({ message: 'Server error', error: err });
+            res.status(400).json({ message: 'the id is still engaged with another table' });
+        else if (err.code === '22003')
+            res.status(400).json({ message: 'id not exist!' });
+        else
+            res.status(500).json({ message: 'Temporary Service Down', error: err });
     }
 }
 
-// get all employees related to a specfic department
+// get all employees related to a specfic department(id)
 const getEmployeeByDept = async (req, res) => {
     const { id } = req.params;
 
+    // Check if id is a valid integer using a regular expression
+    if (!/^\d+$/.test(id)) {
+        return res.status(400).json({ error: 'ID must be an integer' });
+    }
     try {
         const result = await pool.query(
             `SELECT e.* , d.department_name from employees e
@@ -142,7 +167,7 @@ const getEmployeeByDept = async (req, res) => {
         }
         res.status(200).json(result.rows);
     } catch (err) {
-        res.status(500).json({ message: 'Server error', error: err });
+        res.status(500).json({ message: 'Temporary Service Down', error: err });
     }
 }
 
