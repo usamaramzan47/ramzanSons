@@ -1,16 +1,28 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux';
 import { toggleTheme } from '../theme/Theme';
 import { toggleSidebar } from '../sidebar/ToggleRedux';
 
 function Navbar() {
 
+  useEffect(() => {
+    console.log(' navbar Component did mount!');
+
+    // Cleanup function
+    return () => {
+      console.log('navbar Component did unmount!');
+    };
+  }, []); // Empty dependency array means this runs once on mount and cleanup on unmount
+
   const [isOpen, setIsOpen] = useState(false);
 
   const theme = useSelector((state) => state.theme);
+  const handleToggle = () => {
+    dispatch(toggleTheme());
+  };
 
   const currentPage = useSelector((state) => state.currentPage);
-  
+
   const dispatch = useDispatch();
 
   return (
@@ -25,7 +37,7 @@ function Navbar() {
           </div>
         </div>
         <div className="right flex items-center gap-3 relative right-6">
-          <div className="item relative h-full flex justify-start " onClick={() => dispatch(toggleTheme())}>
+          <div className="item relative h-full flex justify-start " onClick={handleToggle}>
             <img src={`/icons/ic_${theme}Mode.svg`} alt="icon" className='p-2 hover:bg-sidebarHover rounded-full cursor-pointer' />
           </div>
           <div className="item relative h-full flex justify-start">

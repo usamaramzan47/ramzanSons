@@ -32,7 +32,6 @@ function AppContent() {
     if (!currentUser) return <Navigate to="/login" replace />;
     return children;
   };
-
   const isLoginPage = location.pathname === '/adminLogin' || location.pathname === '/login';
 
   return (

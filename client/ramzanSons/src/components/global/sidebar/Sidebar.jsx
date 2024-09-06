@@ -1,8 +1,19 @@
 import { Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { setCurrentPage } from './CurrentPageRedux'
+import { useEffect } from 'react';
 
 function Sidebar() {
+
+    useEffect(() => {
+        console.log(' sidebar Component did mount!');
+
+        // Cleanup function
+        return () => {
+            console.log('sidebar Component did unmount!');
+        };
+    }, []); // Empty dependency array means this runs once on mount and cleanup on unmount
+
     const isSidebarCollapsed = useSelector((state) => state.sidebar);
     const currentPage = useSelector((state) => state.currentPage);
     const currentUser = true;
