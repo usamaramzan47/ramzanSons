@@ -1,29 +1,32 @@
 import { useState } from 'react'
-import { useAppContext } from '../../../context/AppContext';
+import { useSelector, useDispatch } from 'react-redux';
+import { toggleTheme } from '../theme/Theme';
+import { toggleSidebar } from '../sidebar/ToggleRedux';
 
 function Navbar() {
 
   const [isOpen, setIsOpen] = useState(false);
 
-  const { toggleSidebar, currentPage, theme, toggleTheme } = useAppContext();
+  const theme = useSelector((state) => state.theme);
 
-  const handleModeIcon = () => {
+  const currentPage = useSelector((state) => state.currentPage);
+  
+  const dispatch = useDispatch();
 
-  }
   return (
     <>
       <div className='p-2 w-full flex justify-between items-center border-b-1 bg-white dark:bg-slate-800 dark:text-slate-200 z-10'>
         <div className="left flex flex-col items-end gap-1">
           <div className="wrapper flex items-center">
-            <img src="/icons/ic_menu_bar.svg" alt="icon" className='p-2 cursor-pointer hover:bg-sidebarHover hover:rounded-full' onClick={toggleSidebar} />
+            <img src="/icons/ic_menu_bar.svg" alt="icon" className='p-2 cursor-pointer hover:bg-sidebarHover hover:rounded-full' onClick={() => dispatch(toggleSidebar())} />
             <span className="text-md font-normal font-poppins">{currentPage}</span>
             {/* <span className="text-lg font-semibold font-poppins">Hello, {title.name} 👋</span>
             <span className='text-[10px] font-semibold text-[#878787]'>{title.wish}</span> */}
           </div>
         </div>
         <div className="right flex items-center gap-3 relative right-6">
-          <div className="item relative h-full flex justify-start " onClick={toggleTheme}>
-            <img src={`/icons/ic_${theme}Mode.svg`} alt="icon" className='p-2 hover:bg-sidebarHover rounded-full cursor-pointer' onClick={handleModeIcon} />
+          <div className="item relative h-full flex justify-start " onClick={() => dispatch(toggleTheme())}>
+            <img src={`/icons/ic_${theme}Mode.svg`} alt="icon" className='p-2 hover:bg-sidebarHover rounded-full cursor-pointer' />
           </div>
           <div className="item relative h-full flex justify-start">
             <img src="/icons/ic_setting.svg" alt="icon" className='p-2 hover:bg-sidebarHover rounded-full cursor-pointer' />
