@@ -11,6 +11,7 @@ import Products from './pages/products/Products.jsx';
 import Shops from './pages/shops/Shops.jsx';
 import Orders from './pages/orders/Orders.jsx';
 import OrderTaking from './pages/orders/OrderTaking.jsx';
+import OrderForm from './pages/orders/OrderForm.jsx';
 
 function App() {
   const theme = useSelector((state) => state.theme);
@@ -52,6 +53,7 @@ function AppContent() {
                     <Route exact path="/shops" element={<Shops />} />
                     <Route exact path="/orders" element={<Orders />} />
                     <Route exact path="/orderTaking" element={<OrderTaking />} />
+                    <Route exact path="/orderForm" element={<OrderForm />} />
                   </Routes>
                 </div>}
             </div>
