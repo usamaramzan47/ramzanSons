@@ -20,7 +20,7 @@ function Sidebar() {
     const dispatch = useDispatch();
 
     return (
-        <div className={`left_side sticky top-0 transition-all duration-300 bg-sidebar dark:bg-slate-800 border-r ${isSidebarCollapsed ? 'w-0 p-0 overflow-hidden' : 'w-64 p-4 '} `} >
+        <div className={`left_side sticky top-0 transition-all duration-200 bg-sidebar dark:bg-slate-800 border-r ${isSidebarCollapsed ? 'w-0 p-0 overflow-hidden' : 'w-64 p-4 '} `} >
             <div className="logo flex items-center gap-1 w-max">
                 <img src="/icons/logo_RS.png" alt="logo" className='w-6' />
                 <Link to={"/"}>

@@ -2,7 +2,7 @@ import Navbar from './components/global/navbar/Navbar.jsx';
 import Sidebar from './components/global/sidebar/Sidebar.jsx';
 import Dashboard from './pages/dashboard/Dashboard.jsx';
 import Login from './pages/login/Login.jsx';
-import { BrowserRouter as Router, Routes, Route, useLocation, Navigate } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useSelector } from 'react-redux';
@@ -29,36 +29,36 @@ function App() {
 function AppContent() {
   const location = useLocation();
   const currentUser = true;
-  const ProtectedRoute = ({ children }) => {
-    if (!currentUser) return <Navigate to="/login" replace />;
-    return children;
-  };
+  // const ProtectedRoute = ({ children }) => {
+  //   if (!currentUser) return <Navigate to="/login" replace />;
+  //   return children;
+  // };
   const isLoginPage = location.pathname === '/adminLogin' || location.pathname === '/login';
 
   return (
     <>
       {!isLoginPage && (
 
-        <ProtectedRoute>
-          <div className='flex w-full h-full transition-all'>
-            <Sidebar />
-            <div className='flex w-full h-full flex-col'>
-              <Navbar />
-              {currentUser &&
-                <div className='max-w-full h-screen dark:bg-slate-800'>
-                  <Routes>
-                    <Route exact path="/" element={<Dashboard />} />
-                    <Route exact path="/users" element={<User />} />
-                    <Route exact path="/products" element={<Products />} />
-                    <Route exact path="/shops" element={<Shops />} />
-                    <Route exact path="/orders" element={<Orders />} />
-                    <Route exact path="/orderTaking" element={<OrderTaking />} />
-                    <Route exact path="/orderForm" element={<OrderForm />} />
-                  </Routes>
-                </div>}
-            </div>
+        // <ProtectedRoute>
+        <div className='flex w-full h-full transition-all'>
+          <Sidebar />
+          <div className='flex w-full h-full flex-col'>
+            <Navbar />
+            {currentUser &&
+              <div className='max-w-full h-screen dark:bg-slate-800'>
+                <Routes>
+                  <Route exact path="/" element={<Dashboard />} />
+                  <Route exact path="/users" element={<User />} />
+                  <Route exact path="/products" element={<Products />} />
+                  <Route exact path="/shops" element={<Shops />} />
+                  <Route exact path="/orders" element={<Orders />} />
+                  <Route exact path="/orderTaking" element={<OrderTaking />} />
+                  <Route exact path="/orderForm" element={<OrderForm />} />
+                </Routes>
+              </div>}
           </div>
-        </ProtectedRoute>
+        </div>
+        // </ProtectedRoute>
       )}
 
       {isLoginPage && (

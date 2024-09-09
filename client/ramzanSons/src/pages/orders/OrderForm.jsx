@@ -43,7 +43,7 @@ const OrderForm = () => {
 
     return (
         <>
-            <ol className="flex items-center justify-around w-full p-3 space-x-2 text-sm font-medium text-center text-gray-500 bg-white border border-gray-200 rounded-lg shadow-sm dark:text-gray-400 sm:text-base dark:bg-gray-800 dark:border-gray-700 sm:p-4 sm:space-x-4 rtl:space-x-reverse">
+            <ol className="mb-2 flex items-center justify-around w-full p-3 space-x-2 text-sm font-medium text-center text-gray-500 bg-white border border-gray-200 rounded-lg shadow-sm dark:text-gray-400 sm:text-base dark:bg-gray-800 dark:border-gray-700 sm:p-4 sm:space-x-4 rtl:space-x-reverse">
                 <li className="flex items-center text-green-500 dark:text-green-400">
                     <span className="flex items-center justify-center w-6 h-6 me-2 text-xs bg-green-200  ring-4 ring-white dark:ring-gray-900 dark:bg-green-900 border shrink-0 rounded-full">
                         <svg className="w-3.5 h-3.5 text-green-500 dark:text-green-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 16 12">
@@ -88,7 +88,6 @@ const OrderForm = () => {
                         </tr>
                     </thead>
                     <tbody>
-
                         <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                             <td className="p-4">
                                 <img src="https://assets.bonappetit.com/photos/5c62e4a3e81bbf522a9579ce/16:9/w_2560%2Cc_limit/milk-bread.jpg" className="w-16 md:w-32 max-w-full max-h-full" alt="Apple iMac" />
@@ -115,12 +114,6 @@ const OrderForm = () => {
                                     </button>
                                 </div>
                             </td>
-                            {/* <td className="px-6 py-4 font-semibold text-gray-900 dark:text-white">
-                            $2499
-                        </td>
-                        <td className="px-6 py-4">
-                            <a href="#" className="font-medium text-red-600 dark:text-red-500 hover:underline">Remove</a>
-                        </td> */}
                         </tr>
 
                     </tbody>

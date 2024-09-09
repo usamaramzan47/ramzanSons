@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import React ,{ useEffect, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux';
 import { toggleTheme } from '../theme/Theme';
 import { toggleSidebar } from '../sidebar/ToggleRedux';
@@ -75,4 +75,4 @@ function Navbar() {
   )
 }
 
-export default Navbar
+export default React.memo(Navbar) 
