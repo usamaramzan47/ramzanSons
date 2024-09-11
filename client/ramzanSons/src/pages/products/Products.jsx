@@ -1,5 +1,23 @@
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchProducts } from '../../features/products/PorductSlice';
+import { toast } from 'react-toastify';
 
 function Products() {
+    const dispatch = useDispatch();
+    const productsData = useSelector((state) => state.products.productsData);
+    const productStatus = useSelector((state) => state.products.status);
+    const productError = useSelector((state) => state.products.error);
+
+    useEffect(() => {
+        if (productStatus === 'idle') {
+            dispatch(fetchProducts());
+        }
+        console.log(productsData, "shop  Data")
+        console.log(productStatus, "shop  Status")
+        productError !== '' && toast.error(productError);
+
+    }, [dispatch, productStatus]);
     return (
         <section className="bg-gray-50 dark:bg-gray-900 py-3 sm:py-5">
             <div className="px-4 mx-auto max-w-screen-2xl lg:px-12">
@@ -203,7 +221,7 @@ function Products() {
                                     <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">9022</td>
                                     <th scope="row" className="flex items-center px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                         <img src="https://www.sartajonline.com/cdn/shop/products/AttaLongRusk.jpg?v=1595501673" alt="iMac Front Image" className="w-auto h-8 mr-3 rounded-full" />
-                                       Rusk
+                                        Rusk
                                     </th>
                                     <td className="px-4 py-2">
                                         <span className="bg-primary-100 text-primary-800 text-xs font-medium px-2 py-0.5 rounded dark:bg-primary-900 dark:text-primary-300">Large</span>
