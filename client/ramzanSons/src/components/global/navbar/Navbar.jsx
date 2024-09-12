@@ -1,18 +1,9 @@
-import React ,{ useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux';
 import { toggleTheme } from '../theme/Theme';
 import { toggleSidebar } from '../sidebar/ToggleRedux';
 
 function Navbar() {
-
-  useEffect(() => {
-    console.log(' navbar Component did mount!');
-
-    // Cleanup function
-    return () => {
-      console.log('navbar Component did unmount!');
-    };
-  }, []); // Empty dependency array means this runs once on mount and cleanup on unmount
 
   const [isOpen, setIsOpen] = useState(false);
 

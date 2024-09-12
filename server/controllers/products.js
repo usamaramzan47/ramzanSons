@@ -1,13 +1,16 @@
 const pool = require('../config/db');
 
 const createProduct = async (req, res) => {
-    const { product_name, size } = req.body;
+    const { product_name, size, img } = req.body;
 
     // Validate the inputs
     if (!product_name || product_name === undefined || Array.isArray(product_name)) {
         return res.status(400).json({ message: "Product name is required and must not be an array" });
     }
 
+    if (!img || img === undefined || Array.isArray(img)) {
+        return res.status(400).json({ message: "Img is required and must not be an array" });
+    }
     if (!size || size === undefined || Array.isArray(size)) {
         return res.status(400).json({ message: "Size is required and must not be an array" });
     }
@@ -15,10 +18,10 @@ const createProduct = async (req, res) => {
 
     try {
         const result = await pool.query(
-            `INSERT INTO Products (product_name, size)
-             VALUES ($1, $2)
+            `INSERT INTO Products (product_name, size, img)
+             VALUES ($1, $2, $3)
              RETURNING *`,
-            [product_name, size]
+            [product_name, size, img]
         );
 
         res.status(201).json(result.rows[0]);
@@ -64,14 +67,17 @@ const getProductById = async (req, res) => {
 //update
 const updateProduct = async (req, res) => {
     const { id } = req.params;
-    const { product_name, size } = req.body;
-
+    const { product_name, size, img } = req.body;
+    
     // Check if id is a valid integer using a regular expression
     if (!/^\d+$/.test(id)) {
         return res.status(400).json({ error: 'ID must be an integer' });
     }
 
     // Validate the inputs
+    if (!img || img === undefined || Array.isArray(img)) {
+        return res.status(400).json({ message: "Product image is required and must not be an array" });
+    }
     if (!product_name || product_name === undefined || Array.isArray(product_name)) {
         return res.status(400).json({ message: "Product name is required and must not be an array" });
     }
@@ -82,10 +88,11 @@ const updateProduct = async (req, res) => {
         const result = await pool.query(
             `UPDATE Products
              SET product_name = COALESCE($1, product_name),
-                 size = COALESCE($2, size)
-             WHERE product_id = $3
+                 size = COALESCE($2, size),
+                 img = COALESCE($3, img)
+             WHERE product_id = $4
              RETURNING *`,
-            [product_name, size, id]
+            [product_name, size, img, id]
         );
 
         if (result.rows.length === 0) {
