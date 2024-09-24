@@ -57,6 +57,12 @@ function Sidebar() {
                                 <span className='font-normal text-blackGray text-14 dark:text-slate-200' onClick={() => dispatch(setCurrentPage('Products'))}>Products</span>
                             </Link>
                         </li>
+                        <li className={`flex gap-1 p-1 rounded-xl items-center ${currentPage === 'Pricing' ? 'bg-sidebarHover dark:bg-slate-700' : ""} hover:bg-sidebarHover dark:hover:bg-slate-700`}>
+                            <img src="/icons/ic_productsList.svg" alt="icon" className='w-5' />
+                            <Link to={"/pricing"}>
+                                <span className='font-normal text-blackGray text-14 dark:text-slate-200' onClick={() => dispatch(setCurrentPage('Pricing'))}>Pricing</span>
+                            </Link>
+                        </li>
                         <li className={`flex gap-1 p-1 rounded-xl items-center ${currentPage === 'Shops' ? 'bg-sidebarHover dark:bg-slate-700' : ""} hover:bg-sidebarHover dark:hover:bg-slate-700`}>
                             <img src="/icons/ic_shop.svg" alt="icon" className='w-5' />
                             <Link to={"/shops"}>

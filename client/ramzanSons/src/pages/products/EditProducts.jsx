@@ -76,7 +76,7 @@ function EditProducts() {
                         />
                     </div>
 
-                    {/* Description */}
+                    {/* Select Size */}
                     <div>
                         <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                             Size
@@ -108,7 +108,6 @@ function EditProducts() {
                 </form>
                 {productError && <span>{productError}</span>}
             </div>
-            <span className='text-2xl'>Status:{isOpen}</span>
             {isOpen && <SuccessBox title={"Successful Updated!"} isOpen={true} setIsOpen={setIsOpen} />}
         </div>
     );

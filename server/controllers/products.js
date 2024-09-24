@@ -26,7 +26,6 @@ const createProduct = async (req, res) => {
 
         res.status(201).json(result.rows[0]);
     } catch (err) {
-        console.error(err);
         res.status(500).json({ message: 'Temporary Service Down', error: err });
     }
 };
@@ -68,7 +67,7 @@ const getProductById = async (req, res) => {
 const updateProduct = async (req, res) => {
     const { id } = req.params;
     const { product_name, size, img } = req.body;
-    
+
     // Check if id is a valid integer using a regular expression
     if (!/^\d+$/.test(id)) {
         return res.status(400).json({ error: 'ID must be an integer' });

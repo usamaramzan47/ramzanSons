@@ -1,4 +1,5 @@
 import { useState } from "react"
+import { Link } from "react-router-dom";
 
 function SuccessBox(props) {
 
@@ -22,9 +23,11 @@ function SuccessBox(props) {
                         <span className="sr-only">Success</span>
                     </div>
                     <p className="mb-4 text-lg font-semibold text-gray-900 dark:text-white">{props.title}</p>
-                    <button onClick={() => handleClose()} type="button" className="py-2 px-3 text-sm font-medium text-center text-white rounded-lg bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 dark:focus:ring-primary-900">
-                        Continue
-                    </button>
+                    <Link to={props.link}>
+                        <button onClick={() => handleClose()} type="button" className="py-2 px-3 text-sm font-medium text-center text-white rounded-lg bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 dark:focus:ring-primary-900">
+                            Continue
+                        </button>
+                    </Link>
                 </div>
             </div>
         </div >
