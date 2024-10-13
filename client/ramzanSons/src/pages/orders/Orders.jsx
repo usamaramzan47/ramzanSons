@@ -57,7 +57,7 @@ function Orders() {
                                         <span className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">M.Ibrahim</span>
                                     </td>
                                     <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                    <div className="flex items-center justify-center gap-1 w-max bg-primary-100 text-primary-800 text-xs font-medium px-2 py-0.5 rounded dark:bg-primary-900 dark:text-primary-300 hover:bg-primary-200 dark:hover:bg-primary-800 group">
+                                        <div className="flex items-center justify-center gap-1 w-max bg-primary-100 text-primary-800 text-xs font-medium px-2 py-0.5 rounded dark:bg-primary-900 dark:text-primary-300 hover:bg-primary-200 dark:hover:bg-primary-800 group">
                                             <span className="flex cursor-pointer">
                                                 view order
                                             </span>
@@ -65,7 +65,6 @@ function Orders() {
                                                 <path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h560v-280h80v280q0 33-23.5 56.5T760-120H200Zm188-212-56-56 372-372H560v-80h280v280h-80v-144L388-332Z" />
                                             </svg>
                                         </div>
-
                                     </td>
                                     <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">+92 303 1234567</td>
                                     <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">2024-08-10</td>

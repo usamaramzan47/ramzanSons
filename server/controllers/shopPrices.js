@@ -2,10 +2,14 @@ const pool = require('../config/db');
 
 // Create ShopPrice
 const createShopPrice = async (req, res) => {
-    const { shop_id, product_id, price } = req.body;
+    const { newPrice } = req.body;
 
-    if (!shop_id || shop_id === undefined || isNaN(shop_id)) {
-        return res.status(400).json({ message: "Valid shop_id is required" });
+    let group_id = newPrice.group_id;
+    let product_id = newPrice.product_id;
+    let price = newPrice.price;
+
+    if (!group_id || group_id === undefined || isNaN(group_id)) {
+        return res.status(400).json({ message: "Valid group_id is required" });
     }
 
     if (!product_id || product_id === undefined || isNaN(product_id)) {
@@ -18,10 +22,24 @@ const createShopPrice = async (req, res) => {
 
     try {
         const result = await pool.query(
-            `INSERT INTO ShopPrices (shop_id, product_id, price)
-             VALUES ($1, $2, $3)
-             RETURNING *`,
-            [shop_id, product_id, price]
+            `WITH inserted AS (
+                INSERT INTO ShopPrices (group_id, product_id, price)
+                VALUES ($1, $2, $3)
+                RETURNING *
+            )
+            SELECT 
+                i.product_id, 
+                p.product_name, 
+                i.price,
+                i.shop_price_id,
+                sg.group_name
+            FROM 
+                inserted i
+            JOIN 
+                Products p ON p.product_id = i.product_id
+            JOIN 
+                Shopgroups sg ON sg.group_id = i.group_id;`,
+            [group_id, product_id, price]
         );
 
         res.status(201).json(result.rows[0]);
@@ -174,7 +192,6 @@ const getShopRatesByShopName = async (req, res) => {
 const updateShopPrice = async (req, res) => {
     const { id } = req.params;
     const { price } = req.body;
-
     // Check if id is a valid integer using a regular expression
     if (!/^\d+$/.test(id)) {
         return res.status(400).json({ error: 'ID must be an integer' });
@@ -185,10 +202,20 @@ const updateShopPrice = async (req, res) => {
     }
     try {
         const result = await pool.query(
-            `UPDATE ShopPrices
-             SET price = COALESCE($1, price)
-             WHERE shop_price_id = $2
-             RETURNING *`,
+            `WITH updated AS (
+            UPDATE ShopPrices
+            SET price = COALESCE($1, price)
+            WHERE shop_price_id = $2
+            RETURNING *)
+            SELECT 
+                updated.*, 
+                p.product_name 
+            FROM 
+                updated 
+            JOIN 
+                Products p 
+            ON 
+                updated.product_id = p.product_id;`,
             [price, id]
         );
 
@@ -221,6 +248,7 @@ const deleteShopPrice = async (req, res) => {
 
         res.status(200).json({ message: 'ShopPrice deleted successfully' });
     } catch (err) {
+        console.log(err)
         if (err.code === "23503")
             res.status(400).json({ message: 'the id is still engaged with another table' });
         else if (err.code === '22003')

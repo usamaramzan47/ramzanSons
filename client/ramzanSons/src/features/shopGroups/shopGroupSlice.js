@@ -25,7 +25,6 @@ export const fetchGroupsById = createAsyncThunk(
             if (response.error) {
                 return rejectWithValue(response.message);
             }
-            console.log(response , "response in slice")
             return response?.data;
         } catch (error) {
             return rejectWithValue(error.message || 'Something went wrong');
@@ -33,18 +32,18 @@ export const fetchGroupsById = createAsyncThunk(
     }
 );
 
-// Create a product (CREATE)
+// Create a shopGroup (CREATE)
 export const createGroup = createAsyncThunk(
-    'product/createProduct',
-    async ({ shopGroupData }, { rejectWithValue }) => {
+    'shopGroup/createshopGroup',
+    async ({ newGroup }, { rejectWithValue }) => {
         try {
-            const response = await createShopGroup(shopGroupData); // Make API call to create product
+            const response = await createShopGroup(newGroup); // Make API call to create shopGroup
             if (response.error) {
                 return rejectWithValue(response.message);
             }
             return response?.data;
         } catch (error) {
-            return rejectWithValue(error.message || 'Failed to create product');
+            return rejectWithValue(error.message || 'Failed to create shopGroup');
         }
     }
 );
@@ -52,9 +51,9 @@ export const createGroup = createAsyncThunk(
 // Update a product (UPDATE)
 export const updateGroup = createAsyncThunk(
     'shopGroup/update',
-    async ({ groupId, shopGroupData }, { rejectWithValue }) => {
+    async ({ groupId, UpdateGroupData }, { rejectWithValue }) => {
         try {
-            const response = await updateShopGroup(groupId, shopGroupData); // Make API call to update product
+            const response = await updateShopGroup(groupId, UpdateGroupData); // Make API call to update product
             if (response.error) {
                 return rejectWithValue(response.message);
             }
@@ -72,9 +71,10 @@ export const deleteGroup = createAsyncThunk(
         try {
             const response = await deleteShopGroup(groupId); // Make API call to delete product
             if (response.error) {
-                return rejectWithValue(response.message);
+                return rejectWithValue(response.error.response.data.message ?? 'unexpected error occered!');
             }
-            return groupId; // Return the deleted product ID to update the state
+            // Return a full response or message from API, not just groupId
+            return groupId;
         } catch (error) {
             return rejectWithValue(error.message || 'Failed to delete product');
         }
@@ -91,6 +91,9 @@ const ProductsSlice = createSlice({
     reducers: {
         resetError: (state) => {
             state.error = ''
+        },
+        resetStatus: (state) => {
+            state.status = 'idle';
         }
     },
     extraReducers: (builder) => {
@@ -116,7 +119,7 @@ const ProductsSlice = createSlice({
                 state.status = 'succeeded';
             })
             .addCase(fetchGroupsById.rejected, (state, action) => {
-                state.error = action.payload || 'Failed to fetch products';
+                state.error = action.payload || 'Failed to fetch groups';
                 state.status = 'failed';
             })
 
@@ -125,11 +128,11 @@ const ProductsSlice = createSlice({
                 state.status = 'loading';
             })
             .addCase(createGroup.fulfilled, (state, action) => {
-                state.shopGroupsData.push(action.payload); // Add new product to state
+                state.shopGroupsData.push(action.payload); // Add new rates to state
                 state.status = 'succeeded';
             })
             .addCase(createGroup.rejected, (state, action) => {
-                state.error = action.payload || 'Failed to create product';
+                state.error = action.payload || 'Failed to create New Group';
                 state.status = 'failed';
             })
 
@@ -139,15 +142,15 @@ const ProductsSlice = createSlice({
             })
             .addCase(updateGroup.fulfilled, (state, action) => {
                 const index = state.shopGroupsData.findIndex(
-                    (shopGroup) => shopGroup.group_id === action.payload.groupId
+                    (shopGroup) => shopGroup.group_id === action.payload.group_id
                 );
                 if (index !== -1) {
-                    state.shopGroupsData[index] = action.payload; // Update the product in state
+                    state.shopGroupsData[index] = action.payload; // Update the groupData in state
                 }
                 state.status = 'succeeded';
             })
             .addCase(updateGroup.rejected, (state, action) => {
-                state.error = action.payload || 'Failed to update product';
+                state.error = action.payload || 'Failed to update group';
                 state.status = 'failed';
             })
 
@@ -162,13 +165,13 @@ const ProductsSlice = createSlice({
                 state.status = 'succeeded';
             })
             .addCase(deleteGroup.rejected, (state, action) => {
-                state.error = action.payload || 'Failed to delete product';
+                state.error = action.payload || 'Failed to delete group';
                 state.status = 'failed';
             });
     },
 });
 
-export const { resetError } = ProductsSlice.actions; // Make sure resetError is exported here
+export const { resetError, resetStatus } = ProductsSlice.actions; // Make sure resetError is exported here
 
 
 export default ProductsSlice.reducer;

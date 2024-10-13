@@ -4,7 +4,7 @@ const VITE_API_URL = import.meta.env.VITE_API_URL;
 
 export const fetchShopGroups = async () => {
     try {
-        const response = await axios.get(`${VITE_API_URL}/shopGroups/`);
+        const response = await axios.get(`${VITE_API_URL}/shopPrices/`);
         return response;
     } catch (error) {
         if (error.message === 'Network Error' || error.code === 'ERR_NETWORK') {
@@ -14,9 +14,9 @@ export const fetchShopGroups = async () => {
         return { error: 'An error occurred', message: error.message || 'Something went wrong' };
     }
 };
-export const fetchShopGroupsById = async (groupId) => {
+export const fetchGroupPricesById = async (groupId) => {
     try {
-        const response = await axios.get(`${VITE_API_URL}/shopGroups/${groupId}`);
+        const response = await axios.get(`${VITE_API_URL}/shopPrices/${groupId}`);
         return response;
     } catch (error) {
         if (error.message === 'Network Error' || error.code === 'ERR_NETWORK') {
@@ -28,9 +28,10 @@ export const fetchShopGroupsById = async (groupId) => {
 };
 
 // Create shopGroup (CREATE)
-export const createShopGroup = async (newGroup) => {
+export const createGroupPrice = async (newPrice) => {
     try {
-        return await axios.post(`${VITE_API_URL}/shopGroups/`, { newGroup });
+        const res = await axios.post(`${VITE_API_URL}/shopPrices/`, { newPrice });
+        return res;
     } catch (error) {
         console.log(error)
         if (error.message === 'Network Error' || error.code === 'ERR_NETWORK') {
@@ -41,10 +42,11 @@ export const createShopGroup = async (newGroup) => {
 };
 
 // Update Product (UPDATE)
-export const updateShopGroup = async (groupId, shopgroupData) => {
+export const updateGroupPrice = async (priceId, price) => {
     try {
-        return await axios.put(`${VITE_API_URL}/shopGroups/${groupId}`, shopgroupData);
+        return await axios.put(`${VITE_API_URL}/shopPrices/${priceId}`, { price });
     } catch (error) {
+        console.log(error, 'error api call')
         if (error.message === 'Network Error' || error.code === 'ERR_NETWORK') {
             return { error: 'Network Error', message: 'Unable to connect to the server. Please check your network connection.' };
         }
@@ -52,10 +54,10 @@ export const updateShopGroup = async (groupId, shopgroupData) => {
     }
 };
 
-// Delete Product (DELETE)
-export const deleteShopGroup = async (groupId) => {
+// Delete price (DELETE)
+export const deleteGroupPrice = async (priceId) => {
     try {
-        return await axios.delete(`${VITE_API_URL}/shopGroups/${groupId}`);
+        return await axios.delete(`${VITE_API_URL}/shopPrices/${priceId}`);
     } catch (error) {
         if (error.message === 'Network Error' || error.code === 'ERR_NETWORK') {
             return { error: 'Network Error', message: 'Unable to connect to the server. Please check your network connection.' };

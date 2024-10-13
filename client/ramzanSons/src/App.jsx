@@ -24,7 +24,7 @@ function App() {
   const theme = useSelector((state) => state.theme);
 
   return (
-    <div className={`w-full h-full App  ${theme}`}>
+    <div className={`relative w-full h-full App  ${theme}`}>
       <Router>
         <AppContent />
       </Router>
@@ -47,12 +47,12 @@ function AppContent() {
       {!isLoginPage && (
 
         // <ProtectedRoute>
-        <div className='flex w-full h-full transition-all'>
+        <div className=' flex w-full h-full transition-all'>
           <Sidebar />
           <div className='flex w-full h-full flex-col'>
             <Navbar />
             {currentUser &&
-              <div className='max-w-full h-screen dark:bg-slate-800'>
+              <div className='max-w-full h-full dark:bg-slate-800'>
                 <Routes>
                   <Route exact path="/" element={<Dashboard />} />
                   <Route exact path="/users" element={<User />} />
