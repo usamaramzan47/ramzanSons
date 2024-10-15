@@ -15,9 +15,9 @@ function EditProducts() {
     const productError = useSelector((state) => state.products.error);
     const [isOpen, setIsOpen] = useState(false);
     const [formData, setFormData] = useState({
-        product_name: item.product_name,
-        img: item.img,
-        size: item.size
+        product_name: item?.product_name,
+        img: item?.img,
+        size: item?.size
     });
 
     // Handle form input change
@@ -33,7 +33,7 @@ function EditProducts() {
     const handleSubmit = (e) => {
         e.preventDefault();
         // Handle form submission logic (e.g., API call)
-        dispatch(updateProduct({ productId: item.product_id, productData: formData }));
+        dispatch(updateProduct({ productId: item?.product_id, productData: formData }));
         setIsOpen(true)
         toast.success('Update successful!')
     };
@@ -53,10 +53,10 @@ function EditProducts() {
                         <input
                             type="text"
                             name="product_name"
-                            value={formData.product_name}
+                            value={formData?.product_name}
                             onChange={handleChange}
                             className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-gray-200"
-                            placeholder={item.product_name
+                            placeholder={item?.product_name
                             }
                         />
                     </div>
@@ -72,7 +72,7 @@ function EditProducts() {
                             value={formData.img}
                             onChange={handleChange}
                             className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-gray-200"
-                            placeholder={item.img}
+                            placeholder={item?.img}
                         />
                     </div>
 
@@ -87,7 +87,7 @@ function EditProducts() {
                             onChange={handleChange}
                             className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-gray-200"
                         >
-                            <option value={item.size}>Default: {item.size}</option>
+                            <option value={item?.size}>Default: {item?.size}</option>
                             <option value="small">Small</option>
                             <option value="medium">Medium</option>
                             <option value="large">Large</option>

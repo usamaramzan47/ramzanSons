@@ -145,7 +145,7 @@ const GroupPriceSlice = createSlice({
                 state.loading = false;
             })
             .addCase(createPrice.rejected, (state, action) => {
-                state.error = action.payload || 'Failed to create New Group';
+                state.error = action.payload || 'Failed to create New price';
                 state.status = 'failed';
                 state.loading = false;
             })

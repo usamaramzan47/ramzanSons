@@ -1,6 +1,30 @@
-import { Link } from "react-router-dom"
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { Link, useLocation } from "react-router-dom"
+import useNetworkStatus from "../../hooks/useNetworkStatus";
+import { fetchShops } from "../../features/Shops/ShopSlice";
+import { toast } from "react-toastify";
 
 function Orders() {
+
+  const location = useLocation();
+  // const orderShopId = location.state?.id;
+  const orderStatus = location.state?.status;
+
+  const dispatch = useDispatch();
+  const ShopsData = useSelector((state) => state.shops.ShopsData);
+  const Shopstatus = useSelector((state) => state.shops.status);
+  const shopError = useSelector((state) => state.shops.error);
+  const isOnline = useNetworkStatus();
+
+  useEffect(() => {
+    if (Shopstatus === 'idle' && isOnline) {
+      dispatch(fetchShops());
+    }
+    shopError !== '' && toast.error(shopError);
+
+  }, [dispatch, Shopstatus]);
+
   return (
     <>
       <ol className="flex items-center justify-around w-full p-3 space-x-2 text-sm font-medium text-center text-gray-500 bg-white border border-gray-200 rounded-lg shadow-sm dark:text-gray-400 sm:text-base dark:bg-gray-800 dark:border-gray-700 sm:p-4 sm:space-x-4 rtl:space-x-reverse">
@@ -75,68 +99,46 @@ function Orders() {
                   </tr>
                 </thead>
                 <tbody>
-                  <tr className="border-b dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700">
-                    <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">1382</td>
-                    <th scope="row" className="flex items-center px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                      <img src="/icons/logo_RS.png" alt="iMac Front Image" className="w-auto h-8 mr-3 rounded-full" />
-                      Rahat Store
-                    </th>
-                    <td className="px-4 py-2">
-                      <span className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">M.Ibrahim</span>
-                    </td>
-                    <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                      <Link to={'/orderForm'}>
-                        <div className="flex items-center justify-center gap-1 w-max bg-primary-100 text-primary-800 text-xs font-medium px-2 py-0.5 rounded dark:bg-primary-900 dark:text-primary-300 hover:bg-primary-200 dark:hover:bg-primary-800 group">
-                          <span className="flex cursor-pointer">
-                            Take new Order
-                          </span>
-                          <svg className="transform transition-transform duration-200 ease-in-out group-hover:scale-150" xmlns="http://www.w3.org/2000/svg" height="15px" viewBox="0 -960 960 960" width="15px" fill="#5084C1">
-                            <path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h560v-280h80v280q0 33-23.5 56.5T760-120H200Zm188-212-56-56 372-372H560v-80h280v280h-80v-144L388-332Z" />
-                          </svg>
-                        </div>
-                      </Link>
+                  {ShopsData?.map((item, index) => (
+                    < tr key={index} className="border-b dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700">
+                      <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">{item.shop_id}</td>
+                      <th scope="row" className="flex items-center px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                        <img src={item.img} alt="iMac Front Image" className="w-auto h-8 mr-3 rounded-full" />
+                        {item.shop_name}
+                      </th>
+                      <td className="px-4 py-2">
+                        <span className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">{item.owner}</span>
+                      </td>
+                      <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                        <Link to={'/orderForm'} state={{ id: item.shop_id }}>
+                          <div className="flex items-center justify-center gap-1 w-max bg-primary-100 text-primary-800 text-xs font-medium px-2 py-0.5 rounded dark:bg-primary-900 dark:text-primary-300 hover:bg-primary-200 dark:hover:bg-primary-800 group">
+                            <span className="flex cursor-pointer">
+                              Take new Order
+                            </span>
+                            <svg className="transform transition-transform duration-200 ease-in-out group-hover:scale-150" xmlns="http://www.w3.org/2000/svg" height="15px" viewBox="0 -960 960 960" width="15px" fill="#5084C1">
+                              <path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h560v-280h80v280q0 33-23.5 56.5T760-120H200Zm188-212-56-56 372-372H560v-80h280v280h-80v-144L388-332Z" />
+                            </svg>
+                          </div>
+                        </Link>
 
-                    </td>
-                    <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">+92 303 1234567</td>
-                    <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">2024-08-10</td>
-                    <div className="flex items-center justify-center space-x-3">
-                      <span className="inline-flex items-center bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-green-900 dark:text-green-300">
-                        <span className="w-2 h-2 me-1 bg-green-500 rounded-full"></span>
-                        Completed
-                      </span>
-                    </div>
-                  </tr>
-                  <tr className="border-b dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700">
-                    <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">1382</td>
-                    <th scope="row" className="flex items-center px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                      <img src="/icons/logo_RS.png" alt="iMac Front Image" className="w-auto h-8 mr-3 rounded-full" />
-                      Rahat Store
-                    </th>
-                    <td className="px-4 py-2">
-                      <span className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">M.Ibrahim</span>
-                    </td>
-                    <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                      <Link to={'/orderForm'}>
-                        <div className="flex items-center justify-center gap-1 w-max bg-primary-100 text-primary-800 text-xs font-medium px-2 py-0.5 rounded dark:bg-primary-900 dark:text-primary-300 hover:bg-primary-200 dark:hover:bg-primary-800 group">
-                          <span className="flex cursor-pointer">
-                            Take new Order
-                          </span>
-                          <svg className="transform transition-transform duration-200 ease-in-out group-hover:scale-150" xmlns="http://www.w3.org/2000/svg" height="15px" viewBox="0 -960 960 960" width="15px" fill="#5084C1">
-                            <path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h560v-280h80v280q0 33-23.5 56.5T760-120H200Zm188-212-56-56 372-372H560v-80h280v280h-80v-144L388-332Z" />
-                          </svg>
-                        </div>
-                      </Link>
+                      </td>
+                      <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">{item.shop_num}</td>
+                      <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">{item.createdat}</td>
+                      {/* status  */}
+                      <td>
 
-                    </td>
-                    <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">+92 303 1234567</td>
-                    <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">2024-08-10</td>
-                    <div className="flex items-center justify-center space-x-3">
-                      <span className="inline-flex items-center bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-green-900 dark:text-green-300">
-                        <span className="w-2 h-2 me-1 bg-green-500 rounded-full"></span>
-                        Completed
-                      </span>
-                    </div>
-                  </tr>
+                        <div className="flex items-center justify-center space-x-3">
+                          <span className={`inline-flex items-center bg-${orderStatus ? 'green' : 'red'}-100 text-${orderStatus ? 'green' : 'red'}-800 text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-${orderStatus ? 'green' : 'red'}-900 dark:text-${orderStatus ? 'green' : 'red'}-300`}>
+                            <span className={`w-2 h-2 me-1 bg-${orderStatus ? 'green' : 'red'}-500 rounded-full`}></span>
+                            {orderStatus ? 'Completed' : 'Pending'}
+                          </span>
+                        </div>
+
+                      </td>
+                    </tr>
+                  ))
+                  }
+                  {/* pending orders status  */}
                   <tr className="border-b dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700">
                     <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">1382</td>
                     <th scope="row" className="flex items-center px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
@@ -160,12 +162,14 @@ function Orders() {
                     </td>
                     <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">+92 303 1234567</td>
                     <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">2024-08-10</td>
-                    <div className="flex items-center justify-center space-x-3">
-                      <span className="inline-flex items-center bg-red-100 text-red-800 text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-red-900 dark:text-red-300">
-                        <span className="w-2 h-2 me-1 bg-red-500 rounded-full"></span>
-                        Pending
-                      </span>
-                    </div>
+                    <td>
+                      <div className="flex items-center justify-center space-x-3">
+                        <span className="inline-flex items-center bg-red-100 text-red-800 text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-red-900 dark:text-red-300">
+                          <span className="w-2 h-2 me-1 bg-red-500 rounded-full"></span>
+                          Pending
+                        </span>
+                      </div>
+                    </td>
                   </tr>
                 </tbody>
               </table>
@@ -219,7 +223,7 @@ function Orders() {
             </nav>
           </div>
         </div>
-      </section>
+      </section >
     </>
 
   )

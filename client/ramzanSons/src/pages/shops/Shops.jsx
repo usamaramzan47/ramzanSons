@@ -122,14 +122,14 @@ function Shops() {
                             </thead>
                             <tbody>
                                 {
-                                    ShopsData.length > 0 && ShopsData.map((item) => (
+                                    ShopsData?.length > 0 && ShopsData?.map((item) => (
                                         <tr key={item.shop_id} className="border-b dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700">
                                             <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">{item.shop_id}</td>
                                             <Link to={'/shopDetails'} state={{ item }}>
-                                                <th scope="row" className="flex items-center px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                                <div scope="row" className="flex items-center px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                                     <img src={item.img} alt="img" className="w-auto h-8 mr-3 rounded-full" />
                                                     {item.shop_name}
-                                                </th>
+                                                </div>
                                             </Link>
                                             <td className="px-4 py-2">
                                                 <span className="bg-primary-100 text-primary-800 text-xs font-medium px-2 py-0.5 rounded dark:bg-primary-900 dark:text-primary-300">{item.owner}</span>
@@ -140,18 +140,19 @@ function Shops() {
                                             <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">{item.shop_num}</td>
                                             <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">{item.createdat}</td>
                                             {/* actions  */}
-                                            <div className="flex items-center justify-center space-x-3">
-                                                {/* edit icon  */}
-                                                <Link to='/editShop' state={{ item }}>
-                                                    <span className="cursor-pointer flex items-center justify-center px-2 py-1 text-sm font-medium text-white rounded-lg bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800 hover:scale-50 transition-all duration-300">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF"><path d="M160-400v-80h280v80H160Zm0-160v-80h440v80H160Zm0-160v-80h440v80H160Zm360 560v-123l221-220q9-9 20-13t22-4q12 0 23 4.5t20 13.5l37 37q8 9 12.5 20t4.5 22q0 11-4 22.5T863-380L643-160H520Zm300-263-37-37 37 37ZM580-220h38l121-122-18-19-19-18-122 121v38Zm141-141-19-18 37 37-18-19Z" /></svg>
-                                                    </span>
-                                                </Link>
-                                                {/* del icon  */}
-                                                <svg onClick={() => { setDelShop(item); setisOpenDel(true) }} className="cursor-pointer bg-red-100 m-2 hover:bg-red-200 hover:scale-50 transition-all duration-300 rounded-md px-2 " xmlns="http://www.w3.org/2000/svg" height="35px" viewBox="0 -960 960 960" width="35px" fill="#EA3323"><path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z" /></svg>
-                                            </div>
+                                            <td>
+                                                <div className="flex items-center justify-center space-x-3">
+                                                    {/* edit icon  */}
+                                                    <Link to='/editShop' state={{ item }}>
+                                                        <span className="cursor-pointer flex items-center justify-center px-2 py-1 text-sm font-medium text-white rounded-lg bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800 hover:scale-50 transition-all duration-300">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF"><path d="M160-400v-80h280v80H160Zm0-160v-80h440v80H160Zm0-160v-80h440v80H160Zm360 560v-123l221-220q9-9 20-13t22-4q12 0 23 4.5t20 13.5l37 37q8 9 12.5 20t4.5 22q0 11-4 22.5T863-380L643-160H520Zm300-263-37-37 37 37ZM580-220h38l121-122-18-19-19-18-122 121v38Zm141-141-19-18 37 37-18-19Z" /></svg>
+                                                        </span>
+                                                    </Link>
+                                                    {/* del icon  */}
+                                                    <svg onClick={() => { setDelShop(item); setisOpenDel(true) }} className="cursor-pointer bg-red-100 m-2 hover:bg-red-200 hover:scale-50 transition-all duration-300 rounded-md px-2 " xmlns="http://www.w3.org/2000/svg" height="35px" viewBox="0 -960 960 960" width="35px" fill="#EA3323"><path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z" /></svg>
+                                                </div>
+                                            </td>
                                         </tr>))}
-
                             </tbody>
                         </table>
                     </div>

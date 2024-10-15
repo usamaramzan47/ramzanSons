@@ -17,7 +17,6 @@ function ShopDetails() {
                     </div>
                 </div>
                 <hr />
-
                 <div className="wrapper flex justify-between gap-10">
                     <div className="item? flex flex-col gap-3 text-14 font-semibold">
                         <span className='text-[#878787]  font-bold text-14'>Contact Details</span>

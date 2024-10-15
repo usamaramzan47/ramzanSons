@@ -105,6 +105,8 @@ function DetailPricing() {
                 const res = dispatch(createPrice({ newPrice }));
                 if (res?.arg?.newPrice === newPrice && !shopGroupError)
                     toast.success("successful created!")
+                else
+                    toast.error(shopGroupError)
             } else { // update case
                 const NumberPrice = Number(newPrice.price);
                 const res = dispatch(updatePrice({ priceId: editPrice, price: NumberPrice }));

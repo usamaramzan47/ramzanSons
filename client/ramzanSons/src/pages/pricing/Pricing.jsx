@@ -27,7 +27,7 @@ function Pricing() {
         if (isOnline)
             dispatch(fetchGroups());
 
-    }, [dispatch]);
+    }, [dispatch, isOnline]);
 
     // handle focus on input fileds of pop_up
     useEffect(() => {
