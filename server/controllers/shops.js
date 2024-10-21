@@ -122,19 +122,19 @@ const getShopById = async (req, res) => {
 // Update Shop
 const updateShop = async (req, res) => {
     const { id } = req.params;
-    const { shop_name, shop_address, img, owner, shop_num, shop_description, groupId } = req.body;
+    const { shop_name, shop_address, img, owner, shop_num, shop_description, groupId, order_status } = req.body;
     // Check if id is a valid integer using a regular expression
     if (!/^\d+$/.test(id)) {
         return res.status(400).json({ error: 'ID must be an integer' });
     }
 
-    if (!shop_name || shop_name === undefined || Array.isArray(shop_name)) {
-        return res.status(400).json({ message: "Shop name is required and must not be an array" });
-    }
+    // if (!shop_name || shop_name === undefined || Array.isArray(shop_name)) {
+    //     return res.status(400).json({ message: "Shop name is required and must not be an array" });
+    // }
 
-    if (!shop_address || shop_address === undefined || Array.isArray(shop_address)) {
-        return res.status(400).json({ message: "Shop address is required and must not be an array" });
-    }
+    // if (!shop_address || shop_address === undefined || Array.isArray(shop_address)) {
+    //     return res.status(400).json({ message: "Shop address is required and must not be an array" });
+    // }
 
     try {
         const result = await pool.query(
@@ -146,14 +146,15 @@ const updateShop = async (req, res) => {
                     owner = COALESCE($4, owner),
                     shop_num = COALESCE($5, shop_num),
                     description = COALESCE($6, description),
-                    group_id = COALESCE($7, group_id)
-                WHERE shop_id = $8
+                    group_id = COALESCE($7, group_id),
+                    order_status = COALESCE($8, order_status)
+                WHERE shop_id = $9
                 RETURNING *
             )
             SELECT updated_shop.*, sg.group_name
             FROM updated_shop
             JOIN Shopgroups sg ON updated_shop.group_id = sg.group_id;`,
-            [shop_name, shop_address, img, owner, shop_num, shop_description, groupId, id]
+            [shop_name, shop_address, img, owner, shop_num, shop_description, groupId, order_status, id]
         );
 
         if (result.rows.length === 0) {
@@ -175,7 +176,6 @@ const updateShop = async (req, res) => {
         });
         res.status(200).json(shops[0]);
     } catch (err) {
-        console.log(err, 'error in api function')
         if (err.code === '22003')
             res.status(400).json({ message: 'id not exist!' });
         else

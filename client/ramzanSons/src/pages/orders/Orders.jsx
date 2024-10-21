@@ -1,5 +1,33 @@
+import { useDispatch, useSelector } from "react-redux";
+import useNetworkStatus from "../../hooks/useNetworkStatus";
+import { fetchShops } from "../../features/Shops/ShopSlice";
+import { useEffect } from "react";
 
 function Orders() {
+
+    const dispatch = useDispatch();
+    const ShopsData = useSelector((state) => state.shops.ShopsData);
+    const Shopstatus = useSelector((state) => state.shops.status);
+    const shopError = useSelector((state) => state.shops.error);
+    const isOnline = useNetworkStatus();
+
+    useEffect(() => {
+        if (Shopstatus === 'idle' && isOnline) {
+            dispatch(fetchShops());
+        }
+
+    }, [dispatch, Shopstatus, isOnline]);
+
+    if (shopError) {
+        return (
+            <div className="error">
+                Failed to fetch ShopData {shopError}
+            </div>
+        )
+    }
+
+    const filterOrderedShops = ShopsData?.filter((item) => item?.order_status === "Completed");
+
     return (
         <section className="bg-gray-50 dark:bg-gray-900 py-3 sm:py-5">
             <div className="px-4 mx-auto max-w-screen-2xl lg:px-12">
@@ -47,34 +75,38 @@ function Orders() {
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr className="border-b dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700">
-                                    <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">1382</td>
-                                    <th scope="row" className="flex items-center px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                        <img src="/icons/logo_RS.png" alt="iMac Front Image" className="w-auto h-8 mr-3 rounded-full" />
-                                        Rahat Store
-                                    </th>
-                                    <td className="px-4 py-2">
-                                        <span className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">M.Ibrahim</span>
-                                    </td>
-                                    <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                        <div className="flex items-center justify-center gap-1 w-max bg-primary-100 text-primary-800 text-xs font-medium px-2 py-0.5 rounded dark:bg-primary-900 dark:text-primary-300 hover:bg-primary-200 dark:hover:bg-primary-800 group">
-                                            <span className="flex cursor-pointer">
-                                                view order
-                                            </span>
-                                            <svg className="transform transition-transform duration-200 ease-in-out group-hover:scale-150" xmlns="http://www.w3.org/2000/svg" height="15px" viewBox="0 -960 960 960" width="15px" fill="#5084C1">
-                                                <path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h560v-280h80v280q0 33-23.5 56.5T760-120H200Zm188-212-56-56 372-372H560v-80h280v280h-80v-144L388-332Z" />
-                                            </svg>
-                                        </div>
-                                    </td>
-                                    <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">+92 303 1234567</td>
-                                    <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">2024-08-10</td>
-                                    <div className="flex items-center justify-center space-x-3">
-                                        <span className="cursor-pointer flex items-center justify-center px-2 py-1 text-sm font-medium text-white rounded-lg bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800 hover:scale-50 transition-all duration-300">
-                                            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF"><path d="M160-400v-80h280v80H160Zm0-160v-80h440v80H160Zm0-160v-80h440v80H160Zm360 560v-123l221-220q9-9 20-13t22-4q12 0 23 4.5t20 13.5l37 37q8 9 12.5 20t4.5 22q0 11-4 22.5T863-380L643-160H520Zm300-263-37-37 37 37ZM580-220h38l121-122-18-19-19-18-122 121v38Zm141-141-19-18 37 37-18-19Z" /></svg>
-                                        </span>
-                                        <svg className="cursor-pointer bg-red-100 m-2 hover:bg-red-200 hover:scale-50 transition-all duration-300 rounded-md px-2 " xmlns="http://www.w3.org/2000/svg" height="35px" viewBox="0 -960 960 960" width="35px" fill="#EA3323"><path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z" /></svg>
-                                    </div>
-                                </tr>
+                                {
+                                    filterOrderedShops?.map((item, index) => (
+                                        < tr key={index} className="border-b dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700">
+                                            <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">{item.shop_id}</td>
+                                            <th scope="row" className="flex items-center px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                                <img src={item.img} alt="iMac Front Image" className="w-auto h-8 mr-3 rounded-full" />
+                                                {item.shop_name}
+                                            </th>
+                                            <td className="px-4 py-2">
+                                                <span className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">{item.owner}</span>
+                                            </td>
+                                            <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                                <div className="flex items-center justify-center gap-1 w-max bg-primary-100 text-primary-800 text-xs font-medium px-2 py-0.5 rounded dark:bg-primary-900 dark:text-primary-300 hover:bg-primary-200 dark:hover:bg-primary-800 group">
+                                                    <span className="flex cursor-pointer">
+                                                        view order
+                                                    </span>
+                                                    <svg className="transform transition-transform duration-200 ease-in-out group-hover:scale-150" xmlns="http://www.w3.org/2000/svg" height="15px" viewBox="0 -960 960 960" width="15px" fill="#5084C1">
+                                                        <path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h560v-280h80v280q0 33-23.5 56.5T760-120H200Zm188-212-56-56 372-372H560v-80h280v280h-80v-144L388-332Z" />
+                                                    </svg>
+                                                </div>
+                                            </td>
+                                            <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">{item.shop_num}</td>
+                                            <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">{item.createdat}</td>
+                                            <div className="flex items-center justify-center space-x-3">
+                                                <span className="cursor-pointer flex items-center justify-center px-2 py-1 text-sm font-medium text-white rounded-lg bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800 hover:scale-50 transition-all duration-300">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF"><path d="M160-400v-80h280v80H160Zm0-160v-80h440v80H160Zm0-160v-80h440v80H160Zm360 560v-123l221-220q9-9 20-13t22-4q12 0 23 4.5t20 13.5l37 37q8 9 12.5 20t4.5 22q0 11-4 22.5T863-380L643-160H520Zm300-263-37-37 37 37ZM580-220h38l121-122-18-19-19-18-122 121v38Zm141-141-19-18 37 37-18-19Z" /></svg>
+                                                </span>
+                                                <svg className="cursor-pointer bg-red-100 m-2 hover:bg-red-200 hover:scale-50 transition-all duration-300 rounded-md px-2 " xmlns="http://www.w3.org/2000/svg" height="35px" viewBox="0 -960 960 960" width="35px" fill="#EA3323"><path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z" /></svg>
+                                            </div>
+                                        </tr>
+                                    ))
+                                }
 
                             </tbody>
                         </table>
@@ -128,7 +160,7 @@ function Orders() {
                     </nav>
                 </div>
             </div>
-        </section>
+        </section >
     )
 }
 

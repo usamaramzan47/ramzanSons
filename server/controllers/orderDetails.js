@@ -2,24 +2,32 @@ const pool = require('../config/db');
 const moment = require('moment-timezone');
 
 const createOrderDetail = async (req, res) => {
-    const { order_id, product_id, quantity } = req.body;
+    const { order_id, products } = req.body; // Expecting products as an array of { product_id, quantity }
+
+    // Ensure products is an array
+    if (!Array.isArray(products) || products.length === 0) {
+        return res.status(400).json({ message: 'Products list is required and cannot be empty' });
+    }
+
+    const values = products.map(({ product_id, quantity }) => `(${order_id}, ${product_id}, ${quantity})`).join(", ");
 
     try {
-        const result = await pool.query(
-            `INSERT INTO OrderDetails (order_id, product_id, quantity)
-             VALUES ($1, $2, $3)
-             RETURNING *;`,
-            [order_id, product_id, quantity]
-        );
-        res.status(201).json(result.rows[0]);
+        const query = `
+            INSERT INTO OrderDetails (order_id, product_id, quantity)
+            VALUES ${values}
+            RETURNING *;
+        `;
+
+        const result = await pool.query(query);
+        res.status(201).json(result.rows); // Return all inserted rows
     } catch (err) {
         if (err.code === '22P02' || err.code === '22003' || err.code === '23503')
             res.status(400).json({ message: 'product id or order id not exist!' });
         else
             res.status(500).json({ message: 'Temporary Service Down!', error: err });
-
     }
 };
+
 
 const getAllOrderDetails = async (req, res) => {
     try {

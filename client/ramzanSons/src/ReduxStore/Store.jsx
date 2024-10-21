@@ -6,6 +6,8 @@ import shopReducer from '../features/shops/ShopSlice';
 import shopGroupReducer from '../features/shopGroups/shopGroupSlice';
 import groupPricesReducer from '../features/groupPrices/shopPricesSlice';
 import productReducer from '../features/products/PorductSlice';
+import orderReducer from '../features/orders/orderSlice';
+import orderDetailReducer from '../features/orders/orderDetailSlice';
 
 const store = configureStore({
     reducer: {
@@ -16,6 +18,8 @@ const store = configureStore({
         shops: shopReducer,
         shopGroup: shopGroupReducer,
         groupPrice: groupPricesReducer,
+        orders: orderReducer,
+        orderDetail: orderDetailReducer,
     },
 });
 

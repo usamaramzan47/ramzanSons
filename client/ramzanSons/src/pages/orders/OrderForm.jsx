@@ -1,18 +1,23 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import useNetworkStatus from '../../hooks/useNetworkStatus';
 import { fetchProducts } from '../../features/products/PorductSlice';
 import { toast } from 'react-toastify';
+import ListLoading from '../../components/global/loading/ListLoading';
+import { createOrder } from '../../features/orders/orderSlice';
+import { createOrderDetail } from '../../features/orders/orderDetailSlice';
+import SuccessBox from '../../components/global/successPopUp/SuccessBox';
+import { updateOrderStatusInDB } from '../../features/Shops/ShopSlice';
 
 const OrderGrid = () => {
 
     const location = useLocation();
     const shopId = location.state?.id;
     const dispatch = useDispatch();
-    const [order, setOrder] = useState({});
+    const [order, setOrder] = useState([]);
     const [showPopup, setShowPopup] = useState(false);
-
+    const [showSuccessBox, setShowSuccessBox] = useState(false);
     const productsData = useSelector((state) => state.products.productsData);
     const productStatus = useSelector((state) => state.products.status);
     const productError = useSelector((state) => state.products.error);
@@ -24,18 +29,38 @@ const OrderGrid = () => {
         if (productStatus === 'idle' && isOnline) {
             dispatch(fetchProducts());
         }
-        productError !== '' && toast.error(productError);
 
-    }, [dispatch, productStatus]);
+    }, [dispatch, productStatus, isOnline]);
 
+    if (productStatus === 'loading') {
+        <ListLoading />
+    }
+
+    if (productError !== '') {
+        toast.error(productError);
+    }
+
+    // Function to handle quantity changes for each product
     const handleQuantityChange = (productId, quantity) => {
-        setOrder(prevOrder => ({
-            ...prevOrder,
-            [productId]: {
-                ...prevOrder[productId],
-                quantity: quantity ? parseInt(quantity) : 0,
-            },
-        }));
+        setOrder(prevOrder => {
+            // Check if the product already exists in the order
+            const existingProductIndex = prevOrder.findIndex(item => item.product_id === productId);
+
+            // If the product is found, update its quantity, otherwise add it
+            if (existingProductIndex > -1) {
+                const updatedOrder = [...prevOrder];
+                updatedOrder[existingProductIndex] = {
+                    ...updatedOrder[existingProductIndex],
+                    quantity: quantity ? parseInt(quantity) : 0,
+                };
+                return updatedOrder;
+            } else {
+                return [
+                    ...prevOrder,
+                    { product_id: productId, quantity: quantity ? parseInt(quantity) : 0 }
+                ];
+            }
+        });
     };
 
     const handleSubmit = (e) => {
@@ -43,9 +68,40 @@ const OrderGrid = () => {
         setShowPopup(true);
     };
 
-    const closePopup = () => setShowPopup(false);
+    const placeConfirmOrder = async () => {
+        const orderData = { shop_id: shopId, order_taker_name: 'usama ramzan' };
+        // generate order id
+        const res = await dispatch(createOrder({ orderData }))
+        const order_id = res?.payload?.order_id
+        if (order_id) {
+            const orderPayload = {
+                order_id: order_id,
+                products: order,
+            };
+            // store order data 
+            const resDetail = await dispatch(createOrderDetail({ orderPayload }));
+            if (resDetail?.meta?.requestStatus === 'fulfilled') {
+                const resStatus = await dispatch(updateOrderStatusInDB({ shopId, newStatus: "Completed" }));
+                if (resStatus?.meta?.requestStatus === 'fulfilled') {
+                    toast.success('order place successful!');
+                    setShowPopup(false);
+                    setShowSuccessBox(!showSuccessBox);
+                }
+                else {
+                    toast.error('something wrong to update the orderStatus');
+                    setShowPopup(false);
+                }
+            }
+            else {
+                toast.error('something wrong. order not placed!');
+                setShowPopup(false);
+            }
+        } else {
+            toast.error('something wrong.order not created !')
+        }
 
-    const confirmedOrder = Object.entries(order).filter(([_, value]) => value.quantity > 0);
+        setShowPopup(false)
+    }
 
     return (
         <div className="p-4 dark:bg-gray-800 dark:text-white">
@@ -99,7 +155,6 @@ const OrderGrid = () => {
                                 <input
                                     type="number"
                                     min="0"
-                                    value={order[product?.product_id]?.quantity || ''}
                                     onChange={(e) => handleQuantityChange(product?.product_id, e.target.value)}
                                     className="w-full p-2 border border-gray-300 rounded dark:border-gray-600 dark:bg-gray-700"
                                     placeholder="Quantity"
@@ -152,16 +207,16 @@ const OrderGrid = () => {
                             </li>
                         </ol>
                         <h2 className="text-xl font-bold mb-4 text-center text-myblue-600">Confirm Your Order</h2>
-                        {confirmedOrder.length > 0 ? (
+                        {order.length > 0 ? (
                             <ul className=''>
                                 <li className='flex justify-between font-bold mb-6 border-b'>
                                     Name <span>Quantity</span>
                                 </li>
-                                {confirmedOrder.map(([productId, productData]) => (
-                                    <li key={productId} className="mb-2 flex justify-between border-b">
-                                        {productsData.length > 0 && productsData.find(p => p?.product_id === parseInt(productId))?.product_name}
+                                {order.map((item) => (
+                                    <li key={item.product_id} className="mb-2 flex justify-between border-b">
+                                        {productsData.length > 0 && productsData.find(p => p?.product_id === parseInt(item.product_id))?.product_name}
                                         <span>
-                                            {productData.quantity}
+                                            {item.quantity ?? 0}
                                         </span>
                                     </li>
                                 ))}
@@ -170,16 +225,25 @@ const OrderGrid = () => {
                             <p>No items selected.</p>
                         )}
                         <div className="flex justify-between mt-4">
-                            {confirmedOrder.length > 0 &&
-                                < Link to={'/orderTaking'} state={{ shopId: shopId, status: true }}>
-                                    <button type="button" className="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" >Confirm</button>
-                                </Link>}
-                            <button onClick={closePopup} type="button" className="text-red-700 hover:text-white border border-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:hover:bg-red-600 dark:focus:ring-red-900">Close</button>
+                            {order.length > 0 &&
+
+                                <button onClick={placeConfirmOrder} type="button" className="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                                    Confirm
+                                </button>
+
+                            }
+                            <button onClick={() => setShowPopup(false)} type="button" className="text-red-700 hover:text-white border border-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:hover:bg-red-600 dark:focus:ring-red-900">
+                                Close
+                            </button>
                         </div>
                     </div>
                 </div>
             )
             }
+            {showSuccessBox &&
+                < SuccessBox title={"Order place Successful"} link={'/orderTaking'} />
+            }
+
         </div >
     );
 };

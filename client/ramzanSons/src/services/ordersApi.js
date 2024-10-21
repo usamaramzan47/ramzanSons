@@ -2,9 +2,9 @@ import axios from 'axios';
 
 const VITE_API_URL = import.meta.env.VITE_API_URL;
 
-export const fetchShopsData = async () => {
+export const fetchProductsData = async () => {
     try {
-        const response = await axios.get(`${VITE_API_URL}/shops/`);
+        const response = await axios.get(`${VITE_API_URL}/products/`);
         return response;
     } catch (error) {
         if (error.message === 'Network Error' || error.code === 'ERR_NETWORK') {
@@ -15,11 +15,12 @@ export const fetchShopsData = async () => {
     }
 };
 
-// Create Shop (CREATE)
-export const createShopData = async (ShopData) => {
+// Create order (CREATE)
+export const createOrderData = async (orderData) => {
     try {
-        return await axios.post(`${VITE_API_URL}/shops/`, ShopData);
+        return await axios.post(`${VITE_API_URL}/orders/`, orderData);
     } catch (error) {
+        console.log(error)
         if (error.message === 'Network Error' || error.code === 'ERR_NETWORK') {
             return { error: 'Network Error', message: 'Unable to connect to the server. Please check your network connection.' };
         }
@@ -27,24 +28,22 @@ export const createShopData = async (ShopData) => {
     }
 };
 
-// Update Shop (UPDATE)
-export const updateShopData = async (ShopId, ShopData) => {
-
+// Update Product (UPDATE)
+export const updateProductData = async (productId, productData) => {
     try {
-        const response = await axios.put(`${VITE_API_URL}/shops/${ShopId}`, ShopData);
-        return response
+        return await axios.put(`${VITE_API_URL}/products/${productId}`, productData);
     } catch (error) {
         if (error.message === 'Network Error' || error.code === 'ERR_NETWORK') {
             return { error: 'Network Error', message: 'Unable to connect to the server. Please check your network connection.' };
         }
-        return { error: error, message: error.response.data.message };
+        return { error: 'Network Error', message: 'Unable to update the product.' };
     }
 };
 
-// Delete Shop (DELETE)
-export const deleteShopData = async (ShopId) => {
+// Delete Product (DELETE)
+export const deleteProductData = async (productId) => {
     try {
-        return await axios.delete(`${VITE_API_URL}/shops/${ShopId}`);
+        return await axios.delete(`${VITE_API_URL}/products/${productId}`);
     } catch (error) {
         if (error.message === 'Network Error' || error.code === 'ERR_NETWORK') {
             return { error: 'Network Error', message: 'Unable to connect to the server. Please check your network connection.' };

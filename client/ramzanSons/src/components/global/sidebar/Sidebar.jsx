@@ -75,10 +75,10 @@ function Sidebar() {
                                 <span className='font-normal text-blackGray text-14 dark:text-slate-200' onClick={() => dispatch(setCurrentPage('Orders'))}>Orders</span>
                             </Link>
                         </li>
-                        <li className={`flex gap-1 p-1 rounded-xl items-center ${currentPage === 'OrdersTaking' ? 'bg-sidebarHover dark:bg-slate-700' : ""} hover:bg-sidebarHover dark:hover:bg-slate-700`}>
+                        <li className={`flex gap-1 p-1 rounded-xl items-center ${currentPage === 'OrderTaking' ? 'bg-sidebarHover dark:bg-slate-700' : ""} hover:bg-sidebarHover dark:hover:bg-slate-700`}>
                             <img src="/icons/ic_orders.svg" alt="icon" className='w-5' />
                             <Link to={"/orderTaking"}>
-                                <span className='font-normal text-blackGray text-14 dark:text-slate-200' onClick={() => dispatch(setCurrentPage('OrdersTaking'))}>Orders Taking</span>
+                                <span className='font-normal text-blackGray text-14 dark:text-slate-200' onClick={() => dispatch(setCurrentPage('OrderTaking'))}>Orders Taking</span>
                             </Link>
                         </li>
                         <li className={`flex gap-1 p-1 rounded-xl items-center ${currentPage === 'Invoice' ? 'bg-sidebarHover dark:bg-slate-700' : ""} hover:bg-sidebarHover dark:hover:bg-slate-700`}>

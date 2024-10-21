@@ -3,7 +3,7 @@ import { fetchShopsData, deleteShopData, updateShopData, createShopData } from '
 
 // Fetch Shops (READ)
 export const fetchShops = createAsyncThunk(
-    'product/fetchShops',
+    'shop/fetchShops',
     async (_, { rejectWithValue }) => {
         try {
             const response = await fetchShopsData();
@@ -22,13 +22,13 @@ export const createShop = createAsyncThunk(
     'Shop/createShop',
     async ({ shopData }, { rejectWithValue }) => {
         try {
-            const response = await createShopData(shopData); // Make API call to create product
+            const response = await createShopData(shopData); // Make API call to create shop
             if (response.error) {
                 return rejectWithValue(response.message);
             }
             return response?.data;
         } catch (error) {
-            return rejectWithValue(error.message || 'Failed to create product');
+            return rejectWithValue(error.message || 'Failed to create shop');
         }
     }
 );
@@ -38,29 +38,44 @@ export const updateShop = createAsyncThunk(
     'Shop/updateShop',
     async ({ shopId, shopData }, { rejectWithValue }) => {
         try {
-            const response = await updateShopData(shopId, shopData); // Make API call to update product
+            const response = await updateShopData(shopId, shopData); // Make API call to update shop
             if (response.error) {
                 return rejectWithValue(response.message);
             }
             return response?.data;
         } catch (error) {
-            return rejectWithValue(error.message || 'Failed to update product');
+            return rejectWithValue(error.message || 'Failed to update shop');
+        }
+    }
+);
+// Update order status in DB and Redux
+export const updateOrderStatusInDB = createAsyncThunk(
+    'shop/updateOrderStatus',
+    async ({ shopId, newStatus }, { rejectWithValue }) => {
+        try {
+            const response = await updateShopData(shopId, { order_status: newStatus });
+            if (response.error) {
+                return rejectWithValue(response.message);
+            }
+            return { shopId, newStatus }; // Return both the shopId and newStatus for the reducer
+        } catch (error) {
+            return rejectWithValue(error.message || 'Failed to update order status');
         }
     }
 );
 
-// Delete a product (DELETE)
+// Delete a shop (DELETE)
 export const deletShop = createAsyncThunk(
-    'product/deleteProduct',
+    'shop/deleteshop',
     async (shopId, { rejectWithValue }) => {
         try {
-            const response = await deleteShopData(shopId); // Make API call to delete product
+            const response = await deleteShopData(shopId); // Make API call to delete shop
             if (response.error) {
                 return rejectWithValue(response.message);
             }
-            return shopId; // Return the deleted product ID to update the state
+            return shopId; // Return the deleted shop ID to update the state
         } catch (error) {
-            return rejectWithValue(error.message || 'Failed to delete product');
+            return rejectWithValue(error.message || 'Failed to delete shop');
         }
     }
 );
@@ -92,20 +107,20 @@ const ShopsSlice = createSlice({
                 state.status = 'failed';
             })
 
-            // // Create product (CREATE)
+            // // Create shop (CREATE)
             .addCase(createShop.pending, (state) => {
                 state.status = 'loading';
             })
             .addCase(createShop.fulfilled, (state, action) => {
-                state.ShopsData.push(action.payload); // Add new product to state
+                state.ShopsData.push(action.payload); // Add new shop to state
                 state.status = 'succeeded';
             })
             .addCase(createShop.rejected, (state, action) => {
-                state.error = action.payload || 'Failed to create product';
+                state.error = action.payload || 'Failed to create shop';
                 state.status = 'failed';
             })
 
-            // Update product (UPDATE)
+            // Update shop (UPDATE)
             .addCase(updateShop.pending, (state) => {
                 state.status = 'loading';
             })
@@ -114,16 +129,33 @@ const ShopsSlice = createSlice({
                     (shop) => shop.shop_id === action.payload.shop_id
                 );
                 if (index !== -1) {
-                    state.ShopsData[index] = action.payload; // Update the product in state
+                    state.ShopsData[index] = action.payload; // Update the shop in state
                 }
                 state.status = 'succeeded';
             })
             .addCase(updateShop.rejected, (state, action) => {
-                state.error = action.payload || 'Failed to update product';
+                state.error = action.payload || 'Failed to update shop';
                 state.status = 'failed';
             })
 
-            // Delete product (DELETE)
+            // Update order status (UPDATE)
+            .addCase(updateOrderStatusInDB.pending, (state) => {
+                state.status = 'loading';
+            })
+            .addCase(updateOrderStatusInDB.fulfilled, (state, action) => {
+                const { shopId, newStatus } = action.payload; // Get the payload
+                const index = state.ShopsData.findIndex(shop => shop.shop_id === shopId);
+                if (index !== -1) {
+                    state.ShopsData[index].order_status = newStatus; // Update the order_status in state
+                }
+                state.status = 'succeeded';
+            })
+            .addCase(updateOrderStatusInDB.rejected, (state, action) => {
+                state.error = action.payload || 'Failed to update order status';
+                state.status = 'failed';
+            })
+
+            // Delete shop (DELETE)
             .addCase(deletShop.pending, (state) => {
                 state.status = 'loading';
             })
