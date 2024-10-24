@@ -35,10 +35,47 @@ const createOrder = async (req, res) => {
     }
 };
 
+const getOrdersByDate = async (req, res) => {
+    const { date } = req.body;
+    try {
+        // Fetch all orders match by date from the database
+        const result = await pool.query(`
+                SELECT o.*, s.shop_name,s.shop_num, s.img from 
+                orders o 
+                join shops s on s.shop_id = o.shop_id 
+                WHERE DATE(order_date) = $1;`, [date]);
+
+        if (result.rows.length === 0) {
+            return res.status(404).json({ message: 'no OrderS record!' });
+        }
+        // Define the desired time zone
+        const timeZone = 'Asia/Karachi'; // Adjust to your desired time zone
+
+        // Map over each order to format the date
+        const orders = result.rows.map(order => {
+            // Convert the UTC date from the database to the desired time zone
+            const zonedDate = moment.utc(order.order_date).tz(timeZone);
+            // Format the date to 'YYYY-MM-DD HH:mm'
+            return {
+                ...order,
+                order_date: zonedDate.format('YYYY-MM-DD HH:mm')
+            };
+        });
+
+        // Send the formatted orders as the response
+        res.status(200).json(orders);
+    } catch (err) {
+
+        res.status(500).json({ message: 'Temporary service Down!', error: err });
+    }
+};
 const getAllOrders = async (req, res) => {
     try {
         // Fetch all orders from the database
-        const result = await pool.query('SELECT * FROM Orders;');
+        const result = await pool.query(`
+                SELECT o.*, s.shop_name,s.shop_num, s.img from 
+                orders o 
+                join shops s on s.shop_id = o.shop_id;`);
 
         if (result.rows.length === 0) {
             return res.status(404).json({ message: 'no OrderS record!' });
@@ -178,6 +215,7 @@ const deleteOrder = async (req, res) => {
 
 module.exports = {
     getAllOrders,
+    getOrdersByDate,
     getOrderById,
     createOrder,
     updateOrder,

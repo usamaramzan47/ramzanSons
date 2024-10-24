@@ -1,13 +1,28 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { fetchProductsData, updateProductData, deleteProductData } from '../../services/productsApi';
-import { createOrderDetailData } from '../../services/orderDetailApi';
+import { createOrderDetailData, fetchOrderById } from '../../services/orderDetailApi';
 
 // Fetch orders (READ)
 export const fetchOrders = createAsyncThunk(
-    'product/fetchOrders',
+    'order/fetchOrders',
     async (_, { rejectWithValue }) => {
         try {
             const response = await fetchProductsData();
+            if (response.error) {
+                return rejectWithValue(response.message);
+            }
+            return response?.data;
+        } catch (error) {
+            return rejectWithValue(error.message || 'Something went wrong');
+        }
+    }
+);
+// Fetch ordersdetail by id (READ)
+export const fetchOrderDetailById = createAsyncThunk(
+    'order/fetchOrdersDetailbyId',
+    async ({ orderId }, { rejectWithValue }) => {
+        try {
+            const response = await fetchOrderById(orderId);
             if (response.error) {
                 return rejectWithValue(response.message);
             }
@@ -89,6 +104,18 @@ const orderDetailSlice = createSlice({
                 state.status = 'succeeded';
             })
             .addCase(fetchOrders.rejected, (state, action) => {
+                state.error = action.payload || 'Failed to fetch orders';
+                state.status = 'failed';
+            })
+            // Fetch orders (READ)
+            .addCase(fetchOrderDetailById.pending, (state) => {
+                state.status = 'loading';
+            })
+            .addCase(fetchOrderDetailById.fulfilled, (state, action) => {
+                state.ordersDetailData = action.payload;
+                state.status = 'succeeded';
+            })
+            .addCase(fetchOrderDetailById.rejected, (state, action) => {
                 state.error = action.payload || 'Failed to fetch orders';
                 state.status = 'failed';
             })

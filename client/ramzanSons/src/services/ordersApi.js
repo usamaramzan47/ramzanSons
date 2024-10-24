@@ -2,9 +2,9 @@ import axios from 'axios';
 
 const VITE_API_URL = import.meta.env.VITE_API_URL;
 
-export const fetchProductsData = async () => {
+export const fetchAllOrders = async () => {
     try {
-        const response = await axios.get(`${VITE_API_URL}/products/`);
+        const response = await axios.get(`${VITE_API_URL}/orders/`);
         return response;
     } catch (error) {
         if (error.message === 'Network Error' || error.code === 'ERR_NETWORK') {

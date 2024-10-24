@@ -112,7 +112,7 @@ const getOrderDetailsByOrderId = async (req, res) => {
             WHERE o.order_id = $1;`,
             [order_id]
         );
-
+        console.log(result.rows)
         if (result.rows.length === 0) {
             return res.status(404).json({ message: 'Order details not found' });
         }

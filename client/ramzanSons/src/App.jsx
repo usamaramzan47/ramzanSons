@@ -19,6 +19,7 @@ import NewShop from './pages/shops/NewShop.jsx';
 import ShopDetails from './pages/shops/ShopDetails.jsx';
 import Pricing from './pages/pricing/Pricing.jsx';
 import DetailPricing from './pages/pricing/DetailPricing.jsx';
+import OrderDetail from './pages/orders/OrderDetail.jsx';
 
 function App() {
   const theme = useSelector((state) => state.theme);
@@ -68,6 +69,7 @@ function AppContent() {
                   <Route exact path="/orders" element={<Orders />} />
                   <Route exact path="/orderTaking" element={<OrderTaking />} />
                   <Route exact path="/orderForm" element={<OrderForm />} />
+                  <Route exact path="/orderDetail" element={<OrderDetail />} />
                 </Routes>
               </div>}
           </div>

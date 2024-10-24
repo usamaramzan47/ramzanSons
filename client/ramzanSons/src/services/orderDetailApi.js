@@ -2,11 +2,14 @@ import axios from 'axios';
 
 const VITE_API_URL = import.meta.env.VITE_API_URL;
 
-export const fetchProductsData = async () => {
+export const fetchOrderById = async (orderId) => {
     try {
-        const response = await axios.get(`${VITE_API_URL}/products/`);
+        const response = await axios.get(`${VITE_API_URL}/orderDetails/${orderId}`);
+        console.log(response, 'res in api')
+
         return response;
     } catch (error) {
+        console.log(error, 'error in api')
         if (error.message === 'Network Error' || error.code === 'ERR_NETWORK') {
             return { error: 'Network Error', message: 'Unable to connect to the server. Please check your network connection.' };
         }

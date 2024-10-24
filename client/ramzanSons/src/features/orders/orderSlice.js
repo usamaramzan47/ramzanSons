@@ -1,13 +1,13 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { fetchProductsData, updateProductData, deleteProductData } from '../../services/productsApi';
+import { fetchAllOrders, updateProductData, deleteProductData } from '../../services/ordersApi';
 import { createOrderData } from '../../services/ordersApi';
 
 // Fetch orders (READ)
 export const fetchOrders = createAsyncThunk(
-    'product/fetchOrders',
+    'orders/fetchOrders',
     async (_, { rejectWithValue }) => {
         try {
-            const response = await fetchProductsData();
+            const response = await fetchAllOrders();
             if (response.error) {
                 return rejectWithValue(response.message);
             }
